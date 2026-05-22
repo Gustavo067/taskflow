@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# TaskFlow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de gerenciamento de tarefas com quadro Kanban, dashboard analítico e notificações por e-mail.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Frontend:** React + Vite + TypeScript
+- **Backend:** NestJS + TypeORM
+- **Banco de dados:** PostgreSQL
+- **Cache / Filas:** Redis + BullMQ
+- **Infraestrutura:** Docker + Docker Compose
 
-## React Compiler
+## Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Autenticação com JWT (login e cadastro)
+- Quadro Kanban com drag-and-drop
+- Criação, edição e exclusão de cards
+- Histórico de movimentações por card
+- Prioridade, tags e data de entrega
+- Dashboard com gráficos analíticos
+- Fila de e-mail assíncrona com BullMQ
 
-## Expanding the ESLint configuration
+## Pré-requisitos
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Docker e Docker Compose
+- Node.js 20+
+- npm
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Como executar com Docker
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# Clone o repositório
+git clone https://github.com/Gustavo067/taskflow.git
+cd taskflow
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Suba todos os serviços
+docker compose up -d
+
+# Acesse o frontend
+cd frontend && npm install && npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Acesse: http://localhost:5173
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Como executar localmente
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Backend
+
+```bash
+cd backend
+cp .env.example .env
+npm install
+npm run start:dev
 ```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Variáveis de ambiente
+
+```env
+DATABASE_URL=postgresql://taskflow:taskflow123@localhost:5432/taskflow
+JWT_SECRET=supersecretkey
+JWT_EXPIRES_IN=7d
+REDIS_URL=redis://localhost:6379
+PORT=3001
+```
+
+## Decisões técnicas
+
+- **BullMQ + Redis** para processamento assíncrono de e-mails, evitando bloqueio nas requisições
+- **TypeORM com synchronize** apenas em desenvolvimento para agilizar iterações
+- **JWT stateless** para autenticação sem necessidade de sessão no servidor
+- **@hello-pangea/dnd** como alternativa mantida do react-beautiful-dnd
+- **Monorepo simples** com backend e frontend na mesma raiz para facilitar o docker-compose
