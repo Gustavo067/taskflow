@@ -24,4 +24,15 @@ export class UsersService {
     const user = this.usersRepo.create(data);
     return this.usersRepo.save(user);
   }
+
+  async findAll() {
+  return this.usersRepo.find({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+    },
+  });
 }
+}
+

@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: taskflow
       POSTGRES_PASSWORD: taskflow123
     ports:
-    - '5433:5432' 
+      - '5433:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -25,6 +25,25 @@ services:
       DATABASE_URL: postgresql://taskflow:taskflow123@postgres:5432/taskflow
       JWT_SECRET: supersecretkey
       REDIS_URL: redis://redis:6379
+      MAIL_HOST: smtp.ethereal.email
+      MAIL_PORT: 587
+      MAIL_USER: david.schroeder@ethereal.email
+      MAIL_PASS: yTuE14yjqFF9smJg7M
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    build: ./backend
+    command: node dist/worker.js
+    environment:
+      DATABASE_URL: postgresql://taskflow:taskflow123@postgres:5432/taskflow
+      JWT_SECRET: supersecretkey
+      REDIS_URL: redis://redis:6379
+      MAIL_HOST: smtp.ethereal.email
+      MAIL_PORT: 587
+      MAIL_USER: david.schroeder@ethereal.email
+      MAIL_PASS: yTuE14yjqFF9smJg7M
     depends_on:
       - postgres
       - redis

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { Task, TaskPriority } from '../types';
+import type { Task, TaskPriority, User } from '../types';
+import api from '../api/axios';
 
 interface Props {
   task?: Task | null;
@@ -14,6 +15,12 @@ export function TaskModal({ task, onClose, onSave, onDelete }: Props) {
   const [priority, setPriority] = useState<TaskPriority>('medium');
   const [dueDate, setDueDate] = useState('');
   const [tags, setTags] = useState('');
+  const [assigneeId, setAssigneeId] = useState('');
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    api.get('/users').then(res => setUsers(res.data));
+  }, []);
 
   useEffect(() => {
     if (task) {
@@ -22,6 +29,7 @@ export function TaskModal({ task, onClose, onSave, onDelete }: Props) {
       setPriority(task.priority);
       setDueDate(task.dueDate ? task.dueDate.slice(0, 10) : '');
       setTags(task.tags?.join(', ') ?? '');
+      setAssigneeId(task.assignee?.id ?? '');
     }
   }, [task]);
 
@@ -33,7 +41,8 @@ export function TaskModal({ task, onClose, onSave, onDelete }: Props) {
       priority,
       dueDate: dueDate || undefined,
       tags: tags ? tags.split(',').map(t => t.trim()) : [],
-    });
+      assigneeId: assigneeId || undefined,
+    } as Partial<Task> & { assigneeId?: string });
     onClose();
   }
 
@@ -45,6 +54,7 @@ export function TaskModal({ task, onClose, onSave, onDelete }: Props) {
   const modal: React.CSSProperties = {
     background: '#fff', borderRadius: 12, padding: 28,
     width: '100%', maxWidth: 480, boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+    maxHeight: '90vh', overflowY: 'auto',
   };
 
   const input: React.CSSProperties = {
@@ -69,6 +79,15 @@ export function TaskModal({ task, onClose, onSave, onDelete }: Props) {
           <option value="low">Prioridade: Baixa</option>
           <option value="medium">Prioridade: Média</option>
           <option value="high">Prioridade: Alta</option>
+        </select>
+
+        {/* ✅ Seletor de responsável */}
+        <select style={input} value={assigneeId}
+          onChange={e => setAssigneeId(e.target.value)}>
+          <option value="">Sem responsável</option>
+          {users.map(u => (
+            <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
+          ))}
         </select>
 
         <input style={input} type="date" value={dueDate}
@@ -98,7 +117,7 @@ export function TaskModal({ task, onClose, onSave, onDelete }: Props) {
             </button>
           )}
           <button onClick={onClose} style={{
-            padding: '8px 16px', borderRadius: 6,
+            padding: '6px 14px', borderRadius: 6,
             border: '1px solid #ddd', background: '#fff', cursor: 'pointer',
           }}>
             Cancelar

@@ -8,11 +8,12 @@ import { TasksModule } from './tasks/tasks.module';
 import { MailModule } from './mail/mail.module';
 import { User } from './users/user.entity';
 import { Task } from './tasks/task.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
