@@ -47,35 +47,43 @@ export function TaskModal({ task, onClose, onSave, onDelete }: Props) {
   }
 
   const overlay: React.CSSProperties = {
-    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)',
+    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
     display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999,
+    backdropFilter: 'blur(4px)',
   };
 
   const modal: React.CSSProperties = {
-    background: '#fff', borderRadius: 12, padding: 28,
-    width: '100%', maxWidth: 480, boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+    background: '#fff', borderRadius: 16, padding: 32,
+    width: '100%', maxWidth: 500, boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
     maxHeight: '90vh', overflowY: 'auto',
   };
 
   const input: React.CSSProperties = {
-    width: '100%', padding: '8px 10px', borderRadius: 6, marginBottom: 12,
-    border: '1px solid #ddd', fontSize: 14, boxSizing: 'border-box',
+    width: '100%', padding: '12px 16px', borderRadius: 8, marginBottom: 16,
+    border: '1px solid #e0e0e0', fontSize: 14, boxSizing: 'border-box',
+    outline: 'none', transition: 'border-color 0.2s',
   };
 
   return (
     <div style={overlay} onClick={onClose}>
       <div style={modal} onClick={e => e.stopPropagation()}>
-        <h3 style={{ margin: '0 0 16px' }}>{task ? 'Editar Tarefa' : 'Nova Tarefa'}</h3>
+        <h3 style={{ margin: '0 0 24px', fontSize: 22, fontWeight: 600, color: '#1a1a1a' }}>{task ? 'Editar Tarefa' : 'Nova Tarefa'}</h3>
 
         <input style={input} placeholder="Título *" value={title}
-          onChange={e => setTitle(e.target.value)} />
+          onChange={e => setTitle(e.target.value)}
+          onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#667eea'}
+          onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#e0e0e0'} />
 
-        <textarea style={{ ...input, height: 80, resize: 'vertical' }}
+        <textarea style={{ ...input, height: 100, resize: 'vertical' }}
           placeholder="Descrição" value={description}
-          onChange={e => setDescription(e.target.value)} />
+          onChange={e => setDescription(e.target.value)}
+          onFocus={(e) => (e.target as HTMLTextAreaElement).style.borderColor = '#667eea'}
+          onBlur={(e) => (e.target as HTMLTextAreaElement).style.borderColor = '#e0e0e0'} />
 
         <select style={input} value={priority}
-          onChange={e => setPriority(e.target.value as TaskPriority)}>
+          onChange={e => setPriority(e.target.value as TaskPriority)}
+          onFocus={(e) => (e.target as HTMLSelectElement).style.borderColor = '#667eea'}
+          onBlur={(e) => (e.target as HTMLSelectElement).style.borderColor = '#e0e0e0'}>
           <option value="low">Prioridade: Baixa</option>
           <option value="medium">Prioridade: Média</option>
           <option value="high">Prioridade: Alta</option>
@@ -83,7 +91,9 @@ export function TaskModal({ task, onClose, onSave, onDelete }: Props) {
 
         {/* ✅ Seletor de responsável */}
         <select style={input} value={assigneeId}
-          onChange={e => setAssigneeId(e.target.value)}>
+          onChange={e => setAssigneeId(e.target.value)}
+          onFocus={(e) => (e.target as HTMLSelectElement).style.borderColor = '#667eea'}
+          onBlur={(e) => (e.target as HTMLSelectElement).style.borderColor = '#e0e0e0'}>
           <option value="">Sem responsável</option>
           {users.map(u => (
             <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
@@ -91,40 +101,72 @@ export function TaskModal({ task, onClose, onSave, onDelete }: Props) {
         </select>
 
         <input style={input} type="date" value={dueDate}
-          onChange={e => setDueDate(e.target.value)} />
+          onChange={e => setDueDate(e.target.value)}
+          onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#667eea'}
+          onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#e0e0e0'} />
 
         <input style={input} placeholder="Tags (separadas por vírgula)"
-          value={tags} onChange={e => setTags(e.target.value)} />
+          value={tags} onChange={e => setTags(e.target.value)}
+          onFocus={(e) => (e.target as HTMLInputElement).style.borderColor = '#667eea'}
+          onBlur={(e) => (e.target as HTMLInputElement).style.borderColor = '#e0e0e0'} />
 
         {task?.history && task.history.length > 0 && (
-          <div style={{ marginBottom: 16 }}>
-            <p style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Histórico</p>
-            {task.history.map((h, i) => (
-              <p key={i} style={{ fontSize: 12, color: '#666', margin: '2px 0' }}>
-                {h.from} → {h.to} • {new Date(h.date).toLocaleString('pt-BR')}
-              </p>
-            ))}
+          <div style={{ marginBottom: 20, padding: 16, background: '#f8fafc', borderRadius: 8 }}>
+            <p style={{ fontWeight: 600, fontSize: 14, marginBottom: 10, color: '#1a1a1a' }}>Histórico</p>
+            {task.history.map((h, i) => {
+              const statusMap: Record<string, string> = {
+                'todo': 'A Fazer',
+                'in_progress': 'Em Progresso',
+                'done': 'Concluído',
+                'To Do': 'A Fazer',
+                'In Progress': 'Em Progresso',
+                'Done': 'Concluído',
+              };
+              const fromStatus = statusMap[h.from] || h.from;
+              const toStatus = statusMap[h.to] || h.to;
+              return (
+                <p key={i} style={{ fontSize: 13, color: '#666', margin: '4px 0', padding: '4px 0', borderBottom: '1px solid #e5e7eb' }}>
+                  {fromStatus} → {toStatus} • {new Date(h.date).toLocaleString('pt-BR')}
+                </p>
+              );
+            })}
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 24, paddingTop: 20, borderTop: '1px solid #e5e7eb' }}>
           {onDelete && (
             <button onClick={onDelete} style={{
-              padding: '8px 16px', borderRadius: 6, border: 'none',
-              background: '#fee2e2', color: '#ef4444', cursor: 'pointer',
-            }}>
+              padding: '10px 20px', borderRadius: 8, border: 'none',
+              background: '#fee2e2', color: '#ef4444', cursor: 'pointer', fontWeight: 500,
+              transition: 'background-color 0.2s',
+            }}
+            onMouseEnter={(e) => (e.target as HTMLButtonElement).style.background = '#fecaca'}
+            onMouseLeave={(e) => (e.target as HTMLButtonElement).style.background = '#fee2e2'}>
               Excluir
             </button>
           )}
           <button onClick={onClose} style={{
-            padding: '6px 14px', borderRadius: 6,
-            border: '1px solid #ddd', background: '#fff', cursor: 'pointer',
-          }}>
+            padding: '10px 20px', borderRadius: 8,
+            border: '1px solid #e0e0e0', background: '#fff', cursor: 'pointer', fontWeight: 500,
+            transition: 'background-color 0.2s',
+          }}
+          onMouseEnter={(e) => (e.target as HTMLButtonElement).style.background = '#f8fafc'}
+          onMouseLeave={(e) => (e.target as HTMLButtonElement).style.background = '#fff'}>
             Cancelar
           </button>
           <button onClick={handleSave} style={{
-            padding: '8px 16px', borderRadius: 6, border: 'none',
-            background: '#4f46e5', color: '#fff', cursor: 'pointer',
+            padding: '10px 24px', borderRadius: 8, border: 'none',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: '#fff', cursor: 'pointer', fontWeight: 600,
+            transition: 'transform 0.2s, box-shadow 0.2s',
+            boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
+          }}
+          onMouseEnter={(e) => {
+            (e.target as HTMLButtonElement).style.transform = 'scale(1.05)';
+            (e.target as HTMLButtonElement).style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            (e.target as HTMLButtonElement).style.transform = 'scale(1)';
+            (e.target as HTMLButtonElement).style.boxShadow = '0 2px 8px rgba(102, 126, 234, 0.3)';
           }}>
             Salvar
           </button>
