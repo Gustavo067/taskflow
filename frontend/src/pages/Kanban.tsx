@@ -22,7 +22,7 @@ interface KanbanProps {
 
 export function Kanban({ tasks, loading, user, logout, navigate, selectedTask, setSelectedTask, creatingInColumn, setCreatingInColumn, handleDragEnd, handleSave, handleDelete }: KanbanProps) {
   return (
-    <div style={{ minHeight: '100vh', background: '#f1f5f9' }}>
+    <div style={{  background: '#f1f5f9' }}>
       {/* Header */}
       <div style={{
         background: '#4f46e5', padding: '12px 24px',
@@ -51,6 +51,7 @@ export function Kanban({ tasks, loading, user, logout, navigate, selectedTask, s
         <div style={{
           display: 'flex', gap: 16, padding: 24,
           overflowX: 'auto', alignItems: 'flex-start',
+          height: 'calc(100vh - 100px)',
         }}>
           {COLUMNS.map(col => {
             const colTasks = tasks.filter(t => t.status === col.id);

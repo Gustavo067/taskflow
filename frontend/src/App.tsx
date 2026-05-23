@@ -5,6 +5,7 @@ import { DashboardContainer } from './container/DashboardContainer';
 import { KanbanContainer } from './container/KanbanContainer';
 import { LoginContainer } from './container/LoginContainer';
 import { RegisterContainer } from './container/RegisterContainer';
+import './styles.css';
 
 
 export default function App() {
