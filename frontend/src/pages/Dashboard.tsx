@@ -30,31 +30,38 @@ export function Dashboard({
   card,
 }: DashboardProps) {
   return (
-    <div style={{ minHeight: '100vh', background: '#f1f5f9' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
       {/* Header */}
       <div style={{
-        background: '#4f46e5', padding: '12px 24px',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '16px 32px',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
       }}>
-        <h1 style={{ color: '#fff', margin: 0, fontSize: 20 }}>TaskFlow — Dashboard</h1>
+        <h1 style={{ color: '#fff', margin: 0, fontSize: 24, fontWeight: 600 }}>TaskFlow — Dashboard</h1>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <span style={{ color: '#c7d2fe', fontSize: 14 }}>Olá, {user?.name}</span>
+          <span style={{ color: '#e0e7ff', fontSize: 15, fontWeight: 500 }}>Olá, {user?.name}</span>
           <button onClick={() => navigate('/kanban')} style={{
-            padding: '6px 14px', borderRadius: 6, border: 'none',
-            background: '#6366f1', color: '#fff', cursor: 'pointer',
-          }}>
+            padding: '8px 20px', borderRadius: 8, border: 'none',
+            background: 'rgba(255, 255, 255, 0.2)', color: '#fff', cursor: 'pointer',
+            fontWeight: 500, transition: 'background-color 0.2s',
+          }}
+          onMouseEnter={(e) => (e.target as HTMLButtonElement).style.background = 'rgba(255, 255, 255, 0.3)'}
+          onMouseLeave={(e) => (e.target as HTMLButtonElement).style.background = 'rgba(255, 255, 255, 0.2)'}>
             Kanban
           </button>
           <button onClick={logout} style={{
-            padding: '6px 14px', borderRadius: 6, border: 'none',
-            background: '#818cf8', color: '#fff', cursor: 'pointer',
-          }}>
+            padding: '8px 20px', borderRadius: 8, border: 'none',
+            background: 'rgba(255, 255, 255, 0.2)', color: '#fff', cursor: 'pointer',
+            fontWeight: 500, transition: 'background-color 0.2s',
+          }}
+          onMouseEnter={(e) => (e.target as HTMLButtonElement).style.background = 'rgba(255, 255, 255, 0.3)'}
+          onMouseLeave={(e) => (e.target as HTMLButtonElement).style.background = 'rgba(255, 255, 255, 0.2)'}>
             Sair
           </button>
         </div>
       </div>
 
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 28 }}>
 
         {/* Cards de resumo */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
@@ -62,9 +69,12 @@ export function Dashboard({
             <div key={col.id} style={{
               ...card,
               borderTop: `4px solid ${COLORS[i]}`,
+              borderRadius: 12,
+              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.08)',
+              backgroundColor: '#ffffff',
             }}>
-              <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>{col.label}</p>
-              <p style={{ margin: '4px 0 0', fontSize: 32, fontWeight: 700, color: COLORS[i] }}>
+              <p style={{ margin: 0, fontSize: 14, color: '#64748b', fontWeight: 500 }}>{col.label}</p>
+              <p style={{ margin: '8px 0 0', fontSize: 36, fontWeight: 700, color: COLORS[i] }}>
                 {tasks.filter(t => t.status === col.id).length}
               </p>
             </div>
@@ -73,8 +83,8 @@ export function Dashboard({
 
         {/* Tarefas atrasadas */}
         {overdueTasks.length > 0 && (
-          <div style={{ ...card, borderLeft: '4px solid #ef4444' }}>
-            <h3 style={{ margin: '0 0 12px', color: '#ef4444' }}>
+          <div style={{ ...card, borderLeft: '4px solid #ef4444', borderRadius: 12, boxShadow: '0 4px 15px rgba(0, 0, 0, 0.08)', backgroundColor: '#ffffff' }}>
+            <h3 style={{ margin: '0 0 16px', color: '#ef4444', fontSize: 16, fontWeight: 600 }}>
               ⚠️ Tarefas Atrasadas ({overdueTasks.length})
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -95,8 +105,8 @@ export function Dashboard({
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
           {/* Tarefas por status */}
-          <div style={card}>
-            <h3 style={{ margin: '0 0 16px', fontSize: 15 }}>Tarefas por Status</h3>
+          <div style={{ ...card, borderRadius: 12, boxShadow: '0 4px 15px rgba(0, 0, 0, 0.08)', backgroundColor: '#ffffff' }}>
+            <h3 style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 600, color: '#1a1a1a' }}>Tarefas por Status</h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={tasksByStatus}>
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
@@ -112,8 +122,8 @@ export function Dashboard({
           </div>
 
           {/* Tarefas por responsável */}
-          <div style={card}>
-            <h3 style={{ margin: '0 0 16px', fontSize: 15 }}>Tarefas por Responsável</h3>
+          <div style={{ ...card, borderRadius: 12, boxShadow: '0 4px 15px rgba(0, 0, 0, 0.08)', backgroundColor: '#ffffff' }}>
+            <h3 style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 600, color: '#1a1a1a' }}>Tarefas por Responsável</h3>
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie
@@ -137,8 +147,8 @@ export function Dashboard({
         </div>
 
         {/* Fluxo de conclusão */}
-        <div style={card}>
-          <h3 style={{ margin: '0 0 16px', fontSize: 15 }}>Fluxo de Conclusão</h3>
+        <div style={{ ...card, borderRadius: 12, boxShadow: '0 4px 15px rgba(0, 0, 0, 0.08)', backgroundColor: '#ffffff' }}>
+          <h3 style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 600, color: '#1a1a1a' }}>Fluxo de Conclusão</h3>
           {completionOverTime.length === 0 ? (
             <p style={{ color: '#94a3b8', fontSize: 13 }}>
               Nenhuma tarefa concluída ainda.
@@ -153,9 +163,9 @@ export function Dashboard({
                 <Line
                   type="monotone"
                   dataKey="total"
-                  stroke="#4f46e5"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
+                  stroke="#667eea"
+                  strokeWidth={3}
+                  dot={{ r: 5, fill: '#667eea' }}
                 />
               </LineChart>
             </ResponsiveContainer>
